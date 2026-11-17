@@ -25,6 +25,13 @@ void asyncExecution(){
     //do some other work while the task is running
     otherWork();
 
+    if(future.valid()){
+        cout << "Future is valid, waiting for the result..." << endl;
+    }
+    else{
+        cout << "Future is not valid." << endl;
+    }
+
     cout << "Result - Random Number: " << future.get() << endl; // Waits for the result
 
     // try to get results multiple times
@@ -35,6 +42,14 @@ void asyncExecution(){
     catch(const std::future_error& e)
     {
         cout << "Caught future_error: " << e.what() << endl;
+    }
+
+    // std::valid() can be used to check if the future is valid before calling get()
+    if(future.valid()){
+        cout << "Future is still valid, result: " << future.get() << endl;
+    }
+    else{
+        cout << "Future is no longer valid." << endl;
     }
 }
 
