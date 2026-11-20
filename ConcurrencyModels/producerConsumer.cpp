@@ -20,18 +20,22 @@ class ThreadSafeQueue{
 
     public:
     void push(T& value){
-        //lock guard locks the mutex and unlock when the object goes out of scope 
+        //lock guard locks the mutex and unlock when the object goes out of scope
+        {
         lock_guard<mutex> lock(mtx);
         // push() - insert items from the back of the queue
         messageQueue.push(value);
+        }  // use inside the braces so you dont have to manually unlock
         // notify the condition variable that new data is available in queue
         flag.notify_one();
     }
     T pop(){
         // unique lock is used to conditionally lock a mutex
+        {
         unique_lock<mutex> lock(mtx);
         // wait for the condition to set: new data available in the queue
         flag.wait(lock, [this]{return !messageQueue.empty();});
+        }
         // front() is used to access the items from the front
         // back() for access from the back
         T value = messageQueue.front();
